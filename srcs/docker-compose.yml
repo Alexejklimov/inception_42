@@ -1,76 +1,96 @@
+version: '3.8'
+
 services:
   nginx:
     build: ./requirements/nginx
     container_name: nginx
-    restart: always
-    ports:
-      - "8443:443"
-    volumes:
-      - wp_data:/var/www/html
     depends_on:
       - wordpress
+    ports:
+      - "443:443"
+    volumes:
+      - wp_data:/var/www/html
     networks:
-      - inception
+      - ${NETWORK_NAME}
+    restart: ${RESTART_POLICY}
+    env_file:
+      - .env
+    secrets:
+      - wp_admin_password
+      - wp_db_password
+    environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
 
   wordpress:
     build: ./requirements/wordpress
     container_name: wordpress
-    restart: always
-    volumes:
-      - wp_data:/var/www/html
     depends_on:
       - mariadb
+    volumes:
+      - wp_data:/var/www/html
+    networks:
+      - ${NETWORK_NAME}
+    restart: ${RESTART_POLICY}
+    env_file:
+      - .env
+    secrets:
+      - wp_admin_password
+      - wp_db_password
     environment:
       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
-      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
       WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
-      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/wp_db_password
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD_FILE: ${WORDPRESS_DB_PASSWORD_FILE}
       WP_ADMIN_USER: ${WP_ADMIN_USER}
-      WP_ADMIN_PASSWORD_FILE: /run/secrets/wp_admin_password
       WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
-    secrets:
-      - wp_db_password
-      - wp_admin_password
-    networks:
-      - inception
+      WP_ADMIN_PASSWORD_FILE: ${WP_ADMIN_PASSWORD_FILE}
+      WP_USER: ${WP_USER}
+      WP_USER_EMAIL: ${WP_USER_EMAIL}
+      WP_USER_PASSWORD: ${WP_USER_PASSWORD}
 
   mariadb:
     build: ./requirements/mariadb
     container_name: mariadb
-    restart: always
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - ${NETWORK_NAME}
+    restart: ${RESTART_POLICY}
+    env_file:
+      - .env
+    secrets:
+      - db_password
+      - db_root_password
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
-      MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -u root -p$(cat /run/secrets/mysql_root_password)"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 90s
-    secrets:
-      - mysql_root_password
-      - mysql_password
-    networks:
-      - inception
+      MYSQL_PASSWORD_FILE: ${MYSQL_PASSWORD_FILE}
+      MYSQL_ROOT_PASSWORD_FILE: ${MYSQL_ROOT_PASSWORD_FILE}
 
 volumes:
-  db_data:
   wp_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_PATH}/wordpress
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_PATH}/mariadb
 
 networks:
-  inception:
+  ${NETWORK_NAME}:
     driver: bridge
 
 secrets:
-  mysql_root_password:
-    file: ../secrets/db_root_password
-  mysql_password:
-    file: ../secrets/db_password
-  wp_db_password:
-    file: ../secrets/wp_db_password
+  db_password:
+    file: ./secrets/db_password
+  db_root_password:
+    file: ./secrets/db_root_password
   wp_admin_password:
-    file: ../secrets/wp_admin_password
+    file: ./secrets/wp_admin_password
+  wp_db_password:
+    file: ./secrets/wp_db_password

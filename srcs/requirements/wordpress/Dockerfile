@@ -1,12 +1,11 @@
 FROM debian:bullseye
 
-# Встановлюємо PHP + розширення + curl + mariadb-client
 RUN apt-get update && apt-get install -y \
     php-fpm php-mysql php-cli php-curl php-gd php-mbstring php-xml php-zip \
     mariadb-client curl wget unzip && \
     rm -rf /var/lib/apt/lists/*
 
-# Створюємо директорію для WordPress
+# Директорія для WordPress
 RUN mkdir -p /var/www/html && chown -R www-data:www-data /var/www/html
 
 # Встановлюємо wp-cli
