@@ -1,0 +1,26 @@
+FROM debian:bullseye
+
+# Встановлюємо PHP + розширення + curl + mariadb-client
+RUN apt-get update && apt-get install -y \
+    php-fpm php-mysql php-cli php-curl php-gd php-mbstring php-xml php-zip \
+    mariadb-client curl wget unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+# Створюємо директорію для WordPress
+RUN mkdir -p /var/www/html && chown -R www-data:www-data /var/www/html
+
+# Встановлюємо wp-cli
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
+
+# Копіюємо конфіг PHP-FPM
+COPY conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
+
+# Копіюємо entrypoint
+COPY tools/wp-setup.sh /usr/local/bin/wp-setup.sh
+RUN chmod +x /usr/local/bin/wp-setup.sh
+
+EXPOSE 9000
+
+ENTRYPOINT ["wp-setup.sh"]
+CMD ["php-fpm7.4", "-F"]
