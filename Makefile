@@ -16,18 +16,18 @@ folders:
 	@mkdir -p $(DATA_PATH)/mariadb
 	@mkdir -p $(DATA_PATH)/wordpress
 
-up:
+up: folders
 	DATA_PATH=$(DATA_PATH) $(COMPOSE) up -d --build
 
 down:
-	DATA_PATH=$(DATA_PATH) $(COMPOSE) down
+	- DATA_PATH=$(DATA_PATH) $(COMPOSE) down
 
 clean:
-	DATA_PATH=$(DATA_PATH) $(COMPOSE) down --remove-orphans
+	- DATA_PATH=$(DATA_PATH) $(COMPOSE) down --remove-orphans
 
 fclean: clean
-	docker system prune -a --volumes -f
-	rm -rf $(DATA_PATH)
+	- docker system prune -a --volumes -f
+	- rm -rf $(DATA_PATH)
 
 re: fclean all
 

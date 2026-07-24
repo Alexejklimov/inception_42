@@ -1,9 +1,10 @@
-FROM debian:bullseye
+FROM debian:bookworm
 
 RUN apt-get update && apt-get install -y \
     php-fpm php-mysql php-cli php-curl php-gd php-mbstring php-xml php-zip \
     mariadb-client curl wget unzip && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /run/php && chown -R www-data:www-data /run/php
 
 # Директорія для WordPress
 RUN mkdir -p /var/www/html && chown -R www-data:www-data /var/www/html
@@ -13,7 +14,7 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
 
 # Копіюємо конфіг PHP-FPM
-COPY conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
+COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 
 # Копіюємо entrypoint
 COPY tools/wp-setup.sh /usr/local/bin/wp-setup.sh
@@ -22,4 +23,4 @@ RUN chmod +x /usr/local/bin/wp-setup.sh
 EXPOSE 9000
 
 ENTRYPOINT ["wp-setup.sh"]
-CMD ["php-fpm7.4", "-F"]
+CMD ["php-fpm8.2", "-F"]
