@@ -8,17 +8,19 @@ Docker Compose: Ensure docker compose (V2) or docker-compose (V1) is available.
 Make: GNU Make is required to run the automation commands.
 Host file: You need to map mknoll.42.fr (or your LOGIN.42.fr) to 127.0.0.1 in /etc/hosts.
 2. Project Structure Explanation
-inception/
-├── Makefile            # Automation commands
+Inception/
+├── Makefile
 ├── srcs/
 │   ├── docker-compose.yml
-│   ├── .env            # Environment configuration (Create this)
 │   ├── requirements/
-│   │   ├── nginx/      # NGINX Dockerfile & configs
-│   │   ├── mariadb/    # MariaDB Dockerfile & scripts
-│   │   ├── wordpress/  # WordPress Dockerfile & scripts
-│   └── tools/
-└── secrets/            # Secret files (Create this folder)
+│   │   ├── nginx/
+│   │   ├── wordpress/
+│   │   └── mariadb/
+│   └── .env
+└── data/
+    ├── mariadb/
+    └── wordpress/
+
 3. How to create .env
 Create a .env file in the srcs/ directory.
 
