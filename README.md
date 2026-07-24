@@ -1,48 +1,56 @@
-Inception
+# Inception  
 A multi‑container Docker application built as part of the 42 curriculum.
 
-📌 Overview
-Inception introduces Docker and Docker Compose by building a small, production‑style infrastructure consisting of:
+---
 
-Nginx — HTTPS reverse proxy
+## 📌 Overview  
+Inception introduces **Docker** and **Docker Compose** by building a small, production‑style infrastructure consisting of:
 
-WordPress — CMS application running via PHP‑FPM
-
-MariaDB — relational database
+- **Nginx** — HTTPS reverse proxy  
+- **WordPress** — CMS running via PHP‑FPM  
+- **MariaDB** — relational database  
 
 All services run inside containers, connected through a dedicated Docker network, with persistent storage handled via Docker volumes.
 
-🏗️ Architecture
-Service Flow
-Nginx listens on 443 (HTTPS)
+---
 
-It forwards requests to WordPress via FastCGI (port 9000)
+## 🏗️ Architecture  
 
-WordPress communicates with MariaDB on 3306
+### **Service Flow**
+- Nginx listens on **443 (HTTPS)**  
+- Nginx forwards requests to WordPress via **FastCGI (port 9000)**  
+- WordPress communicates with MariaDB on **3306**  
 
-Volumes
-wordpress_data → persistent WordPress files
-
-mariadb_data → persistent MariaDB database
+### **Volumes**
+- `wordpress_data` → persistent WordPress files  
+- `mariadb_data` → persistent MariaDB database  
 
 These ensure data survives container rebuilds.
 
-🐳 Docker Concepts Used
-Docker Containers
+---
+
+## 🐳 Docker Concepts Used  
+
+### **Docker Containers**  
 Lightweight, isolated processes sharing the host kernel.
 
-Docker Compose
+### **Docker Compose**  
 Defines and orchestrates multi‑container setups.
 
-**Docker Networks****
+### **Docker Networks**  
 Provides container‑to‑container communication and isolation.
 
-Docker Volumes
+### **Docker Volumes**  
 Ensures persistent storage independent of container lifecycle.
 
-🔐 Configuration & Security
-Environment Variables (.env)
+---
+
+## 🔐 Configuration & Security  
+
+### **Environment Variables (`.env`)**  
 Used for non‑sensitive configuration:
+
+
 
 Code
 DB_USER=admin
