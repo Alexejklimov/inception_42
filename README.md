@@ -1,5 +1,5 @@
 # Inception  
-A multi‑container Docker application built as part of the 42 curriculum.
+Project in school 42 Common Core - multi‑container Docker application built that requires docker-compose usage. 
 
 ---
 
@@ -14,7 +14,7 @@ All services run inside containers, connected through a dedicated Docker network
 
 ---
 
-## 🏗️ Architecture  
+### 🏗️ Architecture  
 
 ### **Service Flow**
 - Nginx listens on **443 (HTTPS)**  
@@ -52,9 +52,9 @@ Used for non‑sensitive configuration:
 
 
 
-Code
-DB_USER=admin
-DB_PASSWORD=supersecret
+DB_USER=oklimov | 
+DB_PASSWORD=goodpass-0
+
 Docker Secrets
 Used for sensitive data (passwords, keys).
 Mounted securely under /run/secrets/<name>.
@@ -62,71 +62,82 @@ Mounted securely under /run/secrets/<name>.
 Use .env for: ports, usernames, non‑secret config
 Use secrets for: passwords, tokens, certificates
 
-🖥️ Virtual Machine vs Docker
-Virtual Machine
+## 🖥️ Virtual Machine vs Docker
+### Virtual Machine
 Full guest OS
 
 Heavy resource usage
 
 Slow startup
 
-Docker
+### Docker
 OS‑level virtualization
 
 Lightweight
 
 Starts in seconds
 
-📂 Project Structure (recommended)
-Code
-Inception/
+## 📂 Project Structure (recommended)
+```
+── DEV_DOC.md
 ├── Makefile
-├── srcs/
-│   ├── docker-compose.yml
-│   ├── requirements/
-│   │   ├── nginx/
-│   │   ├── wordpress/
-│   │   └── mariadb/
-│   └── .env
-└── data/
-    ├── mariadb/
-    └── wordpress/
-🚀 Usage
-Start the project
-Code
-make
-Stop the project
-Code
-make down
-Clean everything
-Code
-make fclean
-Access the site
-Open:
+├── README.md
+├── secrets
+├── srcs
+│   ├── docker-compose.yml
+│   └── requirements
+│       ├── mariadb
+│       │   ├── conf
+│       │   │   └── 50-server.cnf
+│       │   ├── Dockerfile
+│       │   └── tools
+│       │       └── mariadb-init.sh
+│       ├── nginx
+│       │   ├── conf
+│       │   │   └── nginx.conf
+│       │   └── Dockerfile
+│       └── wordpress
+│           ├── conf
+│           │   └── www.conf
+│           ├── Dockerfile
+│           └── tools
+│               └── wp-setup.sh
+└── USER_DOC.md
+```  
 
-Code
-https://<your-login>.42.fr
-🧪 Verification Checklist
-Nginx serves HTTPS only
 
-WordPress is reachable and persistent
+## 🚀 Usage
 
-MariaDB stores data in /home/<login>/data/mariadb
+`make up` -  Start the project
 
-Containers restart automatically
+`make down` - Stop the project
 
-No official Docker images used (all custom-built)
+`make fclean` - Clean everything
 
-📚 Resources
-Docker Best Practices
+To access the site open:  -  https://oklimov.42.fr
 
-MariaDB Docker Docs
+## 🧪 Verification Checklist
 
-Nginx TLS Guide
+- Nginx serves HTTPS only
 
-Docker Volumes Explained
+- WordPress is reachable and persistent
 
-🤖 AI Usage
+- MariaDB stores data in /home/oklimov/data/mariadb
+
+- Containers restart automatically
+
+- No official Docker images used (all custom-built)
+
+
+## 📚 Resources
+- https://docs.docker.com/build/building/best-practices/
+- https://hub.docker.com/_/mariadb
+- https://github.com/MariaDB/mariadb-docker/blob/master/docker-entrypoint.sh
+- https://github.com/docker/awesome-compose
+- https://docs.nginx.com/tls
+
+## 🤖 AI Usage
+
 AI tools were used for:
 
 Debugging container logs
