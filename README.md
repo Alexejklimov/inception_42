@@ -140,8 +140,6 @@ To access the site open:  -  https://oklimov.42.fr
 
 AI tools were used for:
 
-Debugging container logs
-
 Explaining Docker concepts
-
+Debugging container logs
 Improving shell scripts and entrypoints

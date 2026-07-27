@@ -48,4 +48,4 @@ if ! wp core is-installed --allow-root; then
         --allow-root
 fi
 
-exec php-fpm -F
+exec php-fpm8.2 -F

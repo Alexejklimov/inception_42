@@ -4,7 +4,8 @@ services:
     build: ./requirements/nginx
     container_name: nginx
     depends_on:
-      - wordpress
+      wordpress:
+        condition: service_healthy
     ports:
       - "443:443"
     volumes:
@@ -24,7 +25,8 @@ services:
     build: ./requirements/wordpress
     container_name: wordpress
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
     volumes:
       - wp_data:/var/www/html
     networks:
@@ -35,17 +37,23 @@ services:
     secrets:
       - wp_admin_password
       - wp_db_password
+    healthcheck:
+      test: ["CMD", "pgrep", "php-fpm"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
     environment:
       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
       WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
       WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
-      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD_FILE}
+    #   WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD_FILE}
       WP_ADMIN_USER: ${WP_ADMIN_USER}
       WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
-      WP_ADMIN_PASSWORD_FILE: ${WP_ADMIN_PASSWORD_FILE}
+    #   WP_ADMIN_PASSWORD_FILE: ${WP_ADMIN_PASSWORD_FILE}
       WP_USER: ${WP_USER}
       WP_USER_EMAIL: ${WP_USER_EMAIL}
-      WP_USER_PASSWORD: ${WP_USER_PASSWORD}
+    #   WP_USER_PASSWORD: ${WP_USER_PASSWORD}
 
   mariadb:
     build: ./requirements/mariadb
@@ -60,20 +68,35 @@ services:
     secrets:
       - db_password
       - db_root_password
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD_FILE: ${MYSQL_PASSWORD_FILE}
-      MYSQL_ROOT_PASSWORD_FILE: ${MYSQL_ROOT_PASSWORD_FILE}
+    #   MYSQL_PASSWORD_FILE: ${MYSQL_PASSWORD_FILE}
+    #   MYSQL_ROOT_PASSWORD_FILE: ${MYSQL_ROOT_PASSWORD_FILE}
 
 volumes:
   wp_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_PATH}/wordpress
   db_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_PATH}/mariadb
 
 networks:
   inception_network:
+    name: ${NETWORK_NAME}
     driver: bridge
 
 secrets:

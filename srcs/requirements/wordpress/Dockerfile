@@ -20,7 +20,7 @@ COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 COPY tools/wp-setup.sh /usr/local/bin/wp-setup.sh
 RUN chmod +x /usr/local/bin/wp-setup.sh
 
-EXPOSE 9000
+EXPOSE 9009
 
 ENTRYPOINT ["wp-setup.sh"]
 CMD ["php-fpm8.2", "-F"]
